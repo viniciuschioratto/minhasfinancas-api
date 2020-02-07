@@ -12,17 +12,20 @@ import com.chioratto.minhasfinancas.model.entity.Usuario;
 import com.chioratto.minhasfinancas.model.repository.UsuarioRepository;
 import com.chioratto.minhasfinancas.service.UsuarioService;
 
+import lombok.RequiredArgsConstructor;
+
 //Esta notação faz com que o container do spring gerencie uma instancia desta classe
 @Service
+//Com esta notação e o "final" é feito o construtor
+@RequiredArgsConstructor
 public class UsuarioServiceImpl implements UsuarioService {
 	
-	private UsuarioRepository repository;
+	private final UsuarioRepository repository;
 	
-	@Autowired
-	public UsuarioServiceImpl(UsuarioRepository repository) {
-		super();
-		this.repository = repository;
-	}
+	/*
+	 * public UsuarioServiceImpl(UsuarioRepository repository) { super();
+	 * this.repository = repository; }
+	 */
 
 	@Override
 	public Usuario autenticar(String email, String senha) {
@@ -53,6 +56,11 @@ public class UsuarioServiceImpl implements UsuarioService {
 			throw new RegraNegocioException("Já existe um usuário cadastrado com este email"); 
 		}
 		
+	}
+
+	@Override
+	public Optional<Usuario> obterPorId(Long id) {
+		return repository.findById(id);
 	}
 
 }
