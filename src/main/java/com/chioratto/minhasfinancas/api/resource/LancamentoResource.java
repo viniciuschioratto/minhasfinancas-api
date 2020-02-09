@@ -56,6 +56,13 @@ public class LancamentoResource {
 		
 	}
 	
+	@GetMapping("{id}")
+	public ResponseEntity obterLancamento( @PathVariable("id") Long id) {
+		return service.obterPorId(id)
+				.map( lancamento -> new ResponseEntity(converterParaDTO(lancamento), HttpStatus.OK))
+				.orElseGet( () -> new ResponseEntity( HttpStatus.NOT_FOUND));
+	}
+	
 	@PutMapping("{id}")
 	public ResponseEntity atualizar( @PathVariable("id") Long id, @RequestBody LancamentoDTO dto ) {
 		return service.obterPorId(id).map(entity -> {
@@ -120,6 +127,19 @@ public class LancamentoResource {
 		
 		java.util.List<Lancamentos> lancamentos = service.buscar(lancamentoFiltro);
 		return ResponseEntity.ok(lancamentos);
+	}
+	
+	private LancamentoDTO converterParaDTO( Lancamentos lancamento) {
+		return LancamentoDTO.builder()
+				.id(lancamento.getId())
+				.descricao(lancamento.getDescricao())
+				.valor(lancamento.getValor())
+				.mes(lancamento.getMes())
+				.ano(lancamento.getAno())
+				.status(lancamento.getStatus().name())
+				.tipo(lancamento.getTipo().name())
+				.usuario(lancamento.getUsuario().getId())
+				.build();
 	}
 	
 	private Lancamentos converter(LancamentoDTO dto) {
